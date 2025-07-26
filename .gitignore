@@ -1,0 +1,40 @@
+# Node modules
+Frontend/node_modules/
+Backend/node_modules/
+
+# Build / dist outputs
+Frontend/build/
+Backend/dist/
+
+# Environment variables
+Frontend/.env
+Backend/.env
+.env
+.env.*  # In case you ever use .env.local etc. at root
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Test coverage
+coverage/
+
+# MongoDB dumps
+dump/
+
+# Misc
+*.tgz
+*.gz
