@@ -140,15 +140,18 @@ const boardReducer = (state, action) => {
   }
 };
 
-const initialBoardState = {
+
+const BoardProvider = ({ children, inititalCanvas }) => {
+  const initialBoardState = {
   activeToolItem: TOOL_ITEMS.BRUSH,
   toolActionType: TOOL_ACTION_TYPES.NONE,
-  elements: [],
-  history: [[]],
+  elements: inititalCanvas?.elements || [],
+  history: inititalCanvas?.elements || [[]],
   index: 0,
 };
 
-const BoardProvider = ({ children }) => {
+  
+  
   const [boardState, dispatchBoardAction] = useReducer(
     boardReducer,
     initialBoardState

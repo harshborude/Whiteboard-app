@@ -1,34 +1,21 @@
-// import Board from "./components/Board";
-// import Toolbar from "./components/Toolbar";
-// import Toolbox from "./components/Toolbox";
-// import BoardProvider from "./store/BoardProvider";
-// import ToolboxProvider from "./store/ToolboxProvider";
 import React from 'react';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Profile from './pages/Profile';
- import Register from './pages/Register'; // Add this import
+import CanvasPage from './pages/Canvas'; // ✅ Add this
 
 function App() {
   return (
-    // <BoardProvider>
-    //   <ToolboxProvider>
-    //     <Toolbar />
-    //     <Board />
-    //     <Toolbox />
-    //   </ToolboxProvider>
-    // </BoardProvider>
     <Router>
-     
-
-<Routes>
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/profile" element={<Profile />} />
-  <Route path="/" element={<Login />} />
-</Routes>
-
-    </Router> 
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/canvas/load/:id" element={<CanvasPage />} /> {/* ✅ Add this */}
+      </Routes>
+    </Router>
   );
 }
 

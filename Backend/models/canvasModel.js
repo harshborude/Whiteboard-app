@@ -70,5 +70,51 @@ canvasSchema.statics.createCanvas = async function (email, name){
   }
 }
 
+canvasSchema.statics.loadCanvas = async function(email ,id){
+  const user = await mongoose.model('User').findOne({email});
+  try{
+    if(!user) {
+      return Error('user nott found');
+    }
+    const canvas = await this.findOne({_id : id, $or : [{owner: user._id}, {shared_with : user._id}]});
+    return canvas;
+  }
+  catch(err){
+    return Error('Failed getting canvas');
+  }
+}
+
+canvasSchema.statics.updateCanvas = async function (email, id, elements) {
+  try {
+    const user = await mongoose.model('User').findOne({ email });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const canvas = await this.findOne({ 
+      _id: id, 
+      $or: [
+        { owner: user._id }, 
+        { shared_with: user._id }
+      ] 
+    });
+
+    if (!canvas) {
+      throw new Error('Canvas not found');
+    }
+
+    canvas.elements = elements;
+    const updatedCanvas = await canvas.save();
+    return updatedCanvas;
+
+  } catch (err) {
+    throw new Error(`Failed to update canvas: ${err.message}`);
+  }
+};
+
+
+
+
 const Canvas = mongoose.model('Canvas', canvasSchema);
 module.exports = Canvas;
