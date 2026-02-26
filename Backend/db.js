@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
-require('dotenv').config(); // Load .env variables
+const dns = require('node:dns'); // Add this line
+require('dotenv').config();
 
 const url = process.env.MONGO_URI;
+
+// Force Node.js to use Cloudflare and Google public DNS servers
+dns.setServers(['1.1.1.1', '8.8.8.8']); 
 
 const connectToDatabase = async () => {
     try {

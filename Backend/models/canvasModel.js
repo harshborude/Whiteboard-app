@@ -92,27 +92,29 @@ canvasSchema.statics.updateCanvas = async function (email, id, elements) {
       throw new Error('User not found');
     }
 
-    const canvas = await this.findOne({ 
-      _id: id, 
-      $or: [
-        { owner: user._id }, 
-        { shared_with: user._id }
-      ] 
-    });
+    // Use findOneAndUpdate instead of findOne + save
+    const updatedCanvas = await this.findOneAndUpdate(
+      { 
+        _id: id, 
+        $or: [
+          { owner: user._id }, 
+          { shared_with: user._id }
+        ] 
+      },
+      { $set: { elements: elements } },
+      { new: true } // Returns the updated document instead of the old one
+    );
 
-    if (!canvas) {
+    if (!updatedCanvas) {
       throw new Error('Canvas not found');
     }
 
-    canvas.elements = elements;
-    const updatedCanvas = await canvas.save();
     return updatedCanvas;
 
   } catch (err) {
     throw new Error(`Failed to update canvas: ${err.message}`);
   }
 };
-
 
 
 
