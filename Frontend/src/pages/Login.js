@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,10 +12,12 @@ function Login() {
     e.preventDefault();
     setError(null); // reset any existing errors
 
+    const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
+
     try {
       console.log('Logging in with:', email, password);
 
-      const response = await fetch('http://localhost:3030/user/login', {
+      const response = await fetch(`${BACKEND_URL}/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,11 +80,11 @@ function Login() {
           Login
         </button>
         <p className="text-sm text-center mt-4 text-gray-600">
-  Don't have an account?{' '}
-  <Link to="/register" className="text-blue-500 hover:underline">
-    Register here
-  </Link>
-</p>
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Register here
+          </Link>
+        </p>
 
       </form>
     </div>

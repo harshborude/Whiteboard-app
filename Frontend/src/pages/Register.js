@@ -12,8 +12,10 @@ function Register() {
     e.preventDefault();
     setError(null);
 
+    const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
+
     try {
-      const response = await fetch('http://localhost:3030/user/register', {
+      const response = await fetch(`${BACKEND_URL}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
