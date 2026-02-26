@@ -1,5 +1,6 @@
-const API_BASE_URL = 'http://localhost:3030/canvas';
-
+// This will use the live URL in production, and localhost during local development
+const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
+const API_BASE_URL = `${BACKEND_URL}/canvas`;
 export const updateCanvas = async (id, elements) => {
   try {
     const token = localStorage.getItem('token');
