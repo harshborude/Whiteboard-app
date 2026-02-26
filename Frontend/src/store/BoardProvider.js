@@ -141,14 +141,26 @@ const boardReducer = (state, action) => {
 };
 
 
-const BoardProvider = ({ children, inititalCanvas }) => {
+const BoardProvider = ({ children, initialCanvas }) => {
+  
+  // Reconstruct Path2D for brush elements loaded from the database
+  const loadedElements = (initialCanvas?.elements || []).map((element) => {
+    if (element.type === TOOL_ITEMS.BRUSH && element.points) {
+      return {
+        ...element,
+        path: new Path2D(getSvgPathFromStroke(getStroke(element.points))),
+      };
+    }
+    return element;
+  });
+
   const initialBoardState = {
-  activeToolItem: TOOL_ITEMS.BRUSH,
-  toolActionType: TOOL_ACTION_TYPES.NONE,
-  elements: inititalCanvas?.elements || [],
-  history: inititalCanvas?.elements || [[]],
-  index: 0,
-};
+    activeToolItem: TOOL_ITEMS.BRUSH,
+    toolActionType: TOOL_ACTION_TYPES.NONE,
+    elements: loadedElements,
+    history: [loadedElements],
+    index: 0,
+  };
 
   
   

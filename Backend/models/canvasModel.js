@@ -116,6 +116,21 @@ canvasSchema.statics.updateCanvas = async function (email, id, elements) {
   }
 };
 
+canvasSchema.statics.deleteCanvas = async function (email, id) {
+  const user = await mongoose.model('User').findOne({ email });
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  // Only allow the owner to delete the canvas
+  const deletedCanvas = await this.findOneAndDelete({ _id: id, owner: user._id });
+  
+  if (!deletedCanvas) {
+    throw new Error('Canvas not found or you do not have permission to delete it');
+  }
+
+  return deletedCanvas;
+};
 
 
 const Canvas = mongoose.model('Canvas', canvasSchema);

@@ -71,6 +71,26 @@ function Profile() {
     }
   };
 
+  const handleDeleteCanvas = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this canvas?")) return;
+    
+    try {
+      const res = await fetch(`http://localhost:3030/canvas/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to delete canvas');
+
+      setCanvases((prev) => prev.filter((canvas) => canvas._id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-red-100 text-red-700 font-semibold text-xl">
@@ -133,12 +153,22 @@ function Profile() {
                   <p className="text-sm text-gray-600">
                     Last updated: {new Date(canvas.updatedAt).toLocaleString()}
                   </p>
-                  <button
-                    onClick={() => navigate(`/canvas/load/${canvas._id}`)}
-                    className="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
-                  >
-                    Go to Canvas
-                  </button>
+                  
+                  {/* Updated buttons container */}
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      onClick={() => navigate(`/canvas/load/${canvas._id}`)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
+                    >
+                      Go to Canvas
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCanvas(canvas._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

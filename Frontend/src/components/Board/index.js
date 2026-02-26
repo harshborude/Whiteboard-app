@@ -1,4 +1,5 @@
 import { useContext, useEffect, useLayoutEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import rough from "roughjs";
 import boardContext from "../../store/board-context";
 import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../../constants";
@@ -9,6 +10,7 @@ import classes from "./index.module.css";
 function Board() {
   const canvasRef = useRef();
   const textAreaRef = useRef();
+  const navigate = useNavigate();
   const {
     elements,
     toolActionType,
@@ -99,12 +101,39 @@ function Board() {
 
   const handleMouseUp = () => {
     boardMouseUpHandler();
-    const canvasId = window.location.pathname.split('/').pop();
-    updateCanvas(canvasId , elements);
+    // Removed auto-save from here to rely on the manual Save button
+  };
+
+
+  const handleSave = async () => {
+    try {
+      const canvasId = window.location.pathname.split('/').pop();
+      await updateCanvas(canvasId, elements);
+      alert("Canvas saved successfully!");
+    } catch (error) {
+      console.error("Failed to save:", error);
+      alert("Failed to save canvas.");
+    }
   };
 
   return (
     <>
+    {/* UI Buttons container placed above the canvas */}
+      <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50, display: 'flex', gap: '10px' }}>
+        <button 
+          onClick={() => navigate('/profile')} 
+          style={{ padding: '8px 16px', backgroundColor: '#374151', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Dashboard
+        </button>
+        <button 
+          onClick={handleSave} 
+          style={{ padding: '8px 16px', backgroundColor: '#2563EB', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Save
+        </button>
+      </div>
+      
       {toolActionType === TOOL_ACTION_TYPES.WRITING && (
         <textarea
           type="text"
