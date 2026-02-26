@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-// import your board-related providers and components
 import  BoardProvider  from '../store/BoardProvider';
 import  ToolboxProvider  from '../store/ToolboxProvider';
 import Toolbar from '../components/Toolbar/index';
@@ -23,8 +22,10 @@ function CanvasPage() {
         return;
       }
 
+      const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
+
       try {
-        const response = await fetch(`http://localhost:3030/canvas/load/${id}`, {
+        const response = await fetch(`${BACKEND_URL}/canvas/load/${id}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -66,7 +67,7 @@ function CanvasPage() {
   }
 
   return (
-    <BoardProvider initialCanvas = {canvas}>
+    <BoardProvider initialCanvas={canvas}>
       <ToolboxProvider>
         <Toolbar />
         <Board canvas={canvas} />

@@ -9,6 +9,7 @@ function Profile() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem('token');
+  const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
 
   useEffect(() => {
     const fetchProfileAndCanvases = async () => {
@@ -19,7 +20,7 @@ function Profile() {
 
       try {
         // Fetch profile
-        const profileRes = await fetch('http://localhost:3030/user/profile', {
+        const profileRes = await fetch(`${BACKEND_URL}/user/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -30,7 +31,7 @@ function Profile() {
         setProfile(profileData.user);
 
         // Fetch canvases
-        const canvasRes = await fetch('http://localhost:3030/canvas', {
+        const canvasRes = await fetch(`${BACKEND_URL}/canvas`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -46,13 +47,13 @@ function Profile() {
     };
 
     fetchProfileAndCanvases();
-  }, [navigate, token]);
+  }, [navigate, token, BACKEND_URL]);
 
   const handleCreateCanvas = async () => {
     if (!newCanvasName.trim()) return;
 
     try {
-      const res = await fetch('http://localhost:3030/canvas', {
+      const res = await fetch(`${BACKEND_URL}/canvas`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ function Profile() {
     if (!window.confirm("Are you sure you want to delete this canvas?")) return;
     
     try {
-      const res = await fetch(`http://localhost:3030/canvas/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/canvas/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
