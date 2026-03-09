@@ -103,4 +103,3 @@ All routes expect header `{ Authorization: "Bearer <token>" }` unless specified 
 | **POST** | `/canvas/reject/:id` | Rejects and deletes the share request for the canvas. | *None* |
 
 ---
-*Created and maintained by [Your Name/Team].*
