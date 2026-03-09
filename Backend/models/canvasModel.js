@@ -58,10 +58,17 @@ canvasSchema.statics.getAllCanvas = async function (email) {
 //Create a canvas for a user with given email 
 canvasSchema.statics.createCanvas = async function (email, name){
   const user = await mongoose.model('User').findOne({email});
+  if(!user){
+    throw new Error('No user found');
+  }
+
+  // Check if a canvas with this name already exists for the user
+  const existingCanvas = await this.findOne({ owner: user._id, name: name });
+  if (existingCanvas) {
+    throw new Error('You already have a canvas with this name');
+  }
+
   try{
-    if(!user){
-      throw new Error('No user found');
-    }
     const canvas = new this({
       owner : user._id,
       name,
