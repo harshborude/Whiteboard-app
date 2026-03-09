@@ -1,14 +1,14 @@
 # Collaborative Whiteboard Application
 
-## 🚀 Overview
+##  Overview
 The Collaborative Whiteboard Application is a robust, full-stack platform designed to facilitate visual communication and real-time idea mapping. It provides users with a digital canvas where they can freely draw, add text, create shapes, and organize their thoughts.
 
-## 🎯 The Problem It Solves
+##  The Problem It Solves
 Traditional physical whiteboards are constrained by location and space. Remote teams, educators, and students often struggle to visualize and collaborate on diagrams, workflows, or mind maps efficiently over standard video calls or text chats. 
 
 This application bridges that gap by offering a centralized, cloud-accessible whiteboard. Furthermore, it completely eliminates the barrier of isolation by introducing **Canvas Sharing**. A user can instantly send access requests to colleagues via email. Once accepted, those colleagues can view and actively edit the same canvas. It ensures everyone is on the same page—literally!
 
-## 🛠️ Tech Stack
+##  Tech Stack
 - **Frontend**: React.js, TailwindCSS, Rough.js (for hand-drawn style graphics)
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB & Mongoose
@@ -16,7 +16,7 @@ This application bridges that gap by offering a centralized, cloud-accessible wh
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 ### Prerequisites
 Before running the application, ensure you have the following installed on your machine:
@@ -71,7 +71,7 @@ cd Whiteboard-app
 
 ---
 
-## 📡 API Endpoints Documentation
+##  API Endpoints Documentation
 
 All routes expect header `{ Authorization: "Bearer <token>" }` unless specified otherwise.
 
