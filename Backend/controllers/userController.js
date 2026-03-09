@@ -34,15 +34,10 @@ const loginUser = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Authorization token missing or invalid' });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    const user = await User.getUser(decoded.email);
+    // req.user is populated by the protectRoute middleware
+    const email = req.user.email;
+    const user = await User.getUser(email);
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -59,7 +54,7 @@ const getUserProfile = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token: ' + error.message });
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 };
 

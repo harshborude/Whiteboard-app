@@ -1,5 +1,5 @@
 const express = require('express');
-const {getAllCanvas, createCanvas, loadCanvas, updateCanvas, deleteCanvas} = require('../controllers/canavsController');
+const {getAllCanvas, createCanvas, loadCanvas, updateCanvas, deleteCanvas} = require('../controllers/canvasController');
 const auth = require('../middlewares/auth');
 
 const router = express.Router();

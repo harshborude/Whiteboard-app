@@ -54,7 +54,7 @@ canvasSchema.statics.createCanvas = async function (email, name){
   const user = await mongoose.model('User').findOne({email});
   try{
     if(!user){
-      return Error('No use found');
+      throw new Error('No user found');
     }
     const canvas = new this({
       owner : user._id,
@@ -66,7 +66,7 @@ canvasSchema.statics.createCanvas = async function (email, name){
     return newCanvas;
   }
   catch(err){
-    return Error('error creating new canvas');
+    throw new Error('error creating new canvas');
   }
 }
 
@@ -74,13 +74,13 @@ canvasSchema.statics.loadCanvas = async function(email ,id){
   const user = await mongoose.model('User').findOne({email});
   try{
     if(!user) {
-      return Error('user nott found');
+      throw new Error('user not found');
     }
     const canvas = await this.findOne({_id : id, $or : [{owner: user._id}, {shared_with : user._id}]});
     return canvas;
   }
   catch(err){
-    return Error('Failed getting canvas');
+    throw new Error('Failed getting canvas');
   }
 }
 
