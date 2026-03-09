@@ -70,10 +70,62 @@ const deleteCanvas = async (req, res) => {
   }
 };
 
+const shareCanvas = async (req, res) => {
+  const email = req.email;
+  const id = req.params.id;
+  const { targetEmail } = req.body;
+
+  try {
+    if (!targetEmail) {
+      return res.status(400).json({ message: 'Target email is required' });
+    }
+    const canvas = await Canvas.sendShareRequest(email, id, targetEmail);
+    res.status(200).json({ message: 'Share request sent successfully', canvas });
+  } catch (error) {
+    res.status(400).json({ message: error.message || 'Failed to send share request' });
+  }
+};
+
+const getIncomingRequests = async (req, res) => {
+  const email = req.email;
+  try {
+    const requests = await Canvas.getIncomingRequests(email);
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(400).json({ message: error.message || 'Failed to fetch requests' });
+  }
+};
+
+const acceptShareRequest = async (req, res) => {
+  const email = req.email;
+  const id = req.params.id;
+  try {
+    const canvas = await Canvas.acceptRequest(email, id);
+    res.status(200).json({ message: 'Request accepted successfully', canvas });
+  } catch (error) {
+    res.status(400).json({ message: error.message || 'Failed to accept request' });
+  }
+};
+
+const rejectShareRequest = async (req, res) => {
+  const email = req.email;
+  const id = req.params.id;
+  try {
+    const canvas = await Canvas.rejectRequest(email, id);
+    res.status(200).json({ message: 'Request rejected successfully' });
+  } catch (error) {
+    res.status(400).json({ message: error.message || 'Failed to reject request' });
+  }
+};
+
 module.exports = {
     getAllCanvas,
     createCanvas,
     loadCanvas,
     updateCanvas,
-    deleteCanvas // Add this export
+    deleteCanvas,
+    shareCanvas,
+    getIncomingRequests,
+    acceptShareRequest,
+    rejectShareRequest
 };

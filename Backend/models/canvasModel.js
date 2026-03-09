@@ -22,6 +22,12 @@ const canvasSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    share_requests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   
     // last_modified_by: {
     //   type: mongoose.Schema.Types.ObjectId,
@@ -44,7 +50,7 @@ canvasSchema.statics.getAllCanvas = async function (email) {
 
   const canvases = await this.find({
     $or: [{ owner: user._id }, { shared_with: user._id }],
-  });
+  }).populate('owner', 'name'); // Populate owner with just the name
 
   return canvases;
 };
@@ -61,6 +67,7 @@ canvasSchema.statics.createCanvas = async function (email, name){
       name,
       elements : [],
       shared_with : [],
+      share_requests: [],
     });
     const newCanvas = await canvas.save();
     return newCanvas;
@@ -132,6 +139,83 @@ canvasSchema.statics.deleteCanvas = async function (email, id) {
   return deletedCanvas;
 };
 
+
+// Share Requests functionality
+canvasSchema.statics.sendShareRequest = async function(email, id, targetEmail) {
+  const user = await mongoose.model('User').findOne({ email });
+  const targetUser = await mongoose.model('User').findOne({ email: targetEmail });
+
+  if (!user || !targetUser) {
+    throw new Error('User not found');
+  }
+
+  if (email === targetEmail) {
+    throw new Error('You cannot share a canvas with yourself');
+  }
+
+  // Must be owner to share
+  const canvas = await this.findOne({ _id: id, owner: user._id });
+  if (!canvas) {
+    throw new Error('Canvas not found or you are not the owner');
+  }
+
+  if (canvas.shared_with.includes(targetUser._id)) {
+    throw new Error('Canvas is already shared with this user');
+  }
+
+  if (canvas.share_requests.includes(targetUser._id)) {
+    throw new Error('A share request has already been sent to this user');
+  }
+
+  canvas.share_requests.push(targetUser._id);
+  await canvas.save();
+  return canvas;
+};
+
+canvasSchema.statics.getIncomingRequests = async function(email) {
+  const user = await mongoose.model('User').findOne({ email });
+  if (!user) throw new Error('User not found');
+
+  const requests = await this.find({
+    share_requests: user._id
+  }).populate('owner', 'name email'); // Populate owner details to show who sent it
+
+  return requests;
+};
+
+canvasSchema.statics.acceptRequest = async function(email, id) {
+  const user = await mongoose.model('User').findOne({ email });
+  if (!user) throw new Error('User not found');
+
+  const canvas = await this.findOne({ _id: id, share_requests: user._id });
+  if (!canvas) {
+    throw new Error('Request not found');
+  }
+
+  // Remove from requests, add to shared_with
+  canvas.share_requests = canvas.share_requests.filter(reqId => !reqId.equals(user._id));
+  if (!canvas.shared_with.includes(user._id)) {
+    canvas.shared_with.push(user._id);
+  }
+
+  await canvas.save();
+  return canvas;
+};
+
+canvasSchema.statics.rejectRequest = async function(email, id) {
+  const user = await mongoose.model('User').findOne({ email });
+  if (!user) throw new Error('User not found');
+
+  const canvas = await this.findOne({ _id: id, share_requests: user._id });
+  if (!canvas) {
+    throw new Error('Request not found');
+  }
+
+  // Remove from requests
+  canvas.share_requests = canvas.share_requests.filter(reqId => !reqId.equals(user._id));
+  await canvas.save();
+  return canvas;
+};
 
 const Canvas = mongoose.model('Canvas', canvasSchema);
 module.exports = Canvas;

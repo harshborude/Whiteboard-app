@@ -1,4 +1,4 @@
-import { useContext, useEffect, useLayoutEffect, useRef } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import rough from "roughjs";
 import boardContext from "../../store/board-context";
@@ -22,6 +22,9 @@ function Board() {
     redo,
   } = useContext(boardContext);
   const { toolboxState } = useContext(toolboxContext);
+
+  const [showShareDropdown, setShowShareDropdown] = useState(false);
+  const [shareEmail, setShareEmail] = useState('');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -116,19 +119,76 @@ function Board() {
     }
   };
 
+  const handleShare = async () => {
+    if (!shareEmail.trim()) {
+      alert("Please enter an email address.");
+      return;
+    }
+    
+    try {
+      const canvasId = window.location.pathname.split('/').pop();
+      const token = localStorage.getItem('token');
+      const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:3030';
+      
+      const res = await fetch(`${BACKEND_URL}/canvas/share/${canvasId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ targetEmail: shareEmail })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to share canvas');
+
+      alert("Share request sent successfully!");
+      setShowShareDropdown(false);
+      setShareEmail('');
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <>
-    {/* UI Buttons container placed above the canvas */}
-      <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50, display: 'flex', gap: '10px' }}>
+      <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50, display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+        <div style={{ position: 'relative' }}>
+          <button 
+            onClick={() => setShowShareDropdown(!showShareDropdown)} 
+            style={{ padding: '8px 16px', backgroundColor: '#10B981', color: 'white', borderRadius: '4px', cursor: 'pointer', height: 'fit-content' }}
+          >
+            Share With
+          </button>
+          
+          {showShareDropdown && (
+            <div style={{ position: 'absolute', top: '100%', right: '0', marginTop: '8px', padding: '12px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', gap: '8px', width: '250px' }}>
+              <input 
+                type="email" 
+                placeholder="Enter user email..." 
+                value={shareEmail}
+                onChange={(e) => setShareEmail(e.target.value)}
+                style={{ padding: '8px', border: '1px solid #D1D5DB', borderRadius: '4px', outline: 'none' }}
+              />
+              <button 
+                onClick={handleShare}
+                style={{ padding: '8px', backgroundColor: '#3B82F6', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                Send Request
+              </button>
+            </div>
+          )}
+        </div>
+
         <button 
           onClick={() => navigate('/profile')} 
-          style={{ padding: '8px 16px', backgroundColor: '#374151', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+          style={{ padding: '8px 16px', backgroundColor: '#374151', color: 'white', borderRadius: '4px', cursor: 'pointer', height: 'fit-content' }}
         >
           Go to Dashboard
         </button>
         <button 
           onClick={handleSave} 
-          style={{ padding: '8px 16px', backgroundColor: '#2563EB', color: 'white', borderRadius: '4px', cursor: 'pointer' }}
+          style={{ padding: '8px 16px', backgroundColor: '#2563EB', color: 'white', borderRadius: '4px', cursor: 'pointer', height: 'fit-content' }}
         >
           Save
         </button>
